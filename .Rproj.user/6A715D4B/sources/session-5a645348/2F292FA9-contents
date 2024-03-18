@@ -1,0 +1,12 @@
+\name{master_kppa}
+\alias{master_kppa}
+\title{Hello, World!}
+\usage{
+master_kppa()
+}
+\description{
+Prints 'Hello, world!'.
+}
+\examples{
+master_kppa()
+}
