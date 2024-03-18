@@ -8,4 +8,4 @@ You can install the package directly from GitHub using the `devtools` package. F
 
 ```R
 install.packages("devtools")
-install_github("FabianBong/kPPA")
+devtools::install_github("FabianBong/kPPA")
