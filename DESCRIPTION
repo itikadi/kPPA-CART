@@ -1,4 +1,4 @@
-Package: KPPA
+Package: KPPACart
 Type: Package
 Title: Provides a Function as Described in PAPER
 Version: 1.0.0
@@ -18,4 +18,5 @@ Depends:
     foreach,
     doSNOW,
     parallel,
-    pracma
+    pracma,
+    R (>= 2.10)

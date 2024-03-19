@@ -157,9 +157,9 @@ ppaone <- function(X, guess) {
   return(list(Tmin = Tmin, kmin = kmin, imin = indxmin, PPAinfo = PPAinfo))
 }
 
-#' Function to Execute kPPA
+#' Function to Execute KPPACart
 #'
-#' This function executes iterative kPPA as outlined in the paper "...".
+#' This function executes iterative KPPA with classification and regression trees as outlined in the paper "...".
 #'
 #' @param X Data matrix of samples by features
 #' @param n_iterations The number of iterations to run (n_iterations * n_features > n_total_features)
@@ -170,7 +170,7 @@ ppaone <- function(X, guess) {
 #'
 #' @return list of scores, important features/data, and cluster assignments for each sample
 #' @export
-master_kPPA <- function(X,n_features=100,
+KPPACart <- function(X,n_features=100,
                         n_iterations=3000,
                         k_dim=10,
                         exp_clusters=4,

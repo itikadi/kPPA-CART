@@ -1,6 +1,6 @@
-# Iterative KPPA
+# KPPACart
 
-This package adds iterative kPPA as described in "...".
+This package adds iterative kPPA with classification and regression trees as described in "...".
 
 ## Installation
 
@@ -8,7 +8,7 @@ You can install the package directly from GitHub using the `devtools` package. F
 
 ```R
 install.packages("devtools")
-devtools::install_github("FabianBong/kPPA")
+devtools::install_github("FabianBong/KPPACart")
 ```
 
 ## Getting Started 
@@ -16,12 +16,12 @@ devtools::install_github("FabianBong/kPPA")
 To see the functionality of the function it is easiest to load the sample data.
 
 ```R
-data <- kPPA_sample_data()
-res <- master_kPPA(data$X)
+data(KPPACart.Data)
+res <- KPPACart(KPPACart.Data$X)
 ```
 
 It is most helpful to plot the resulting scores in a 2/3-D plot.
 
 ```R
-plot(res$T[,c(1,2)], col=data$Age)
+plot(res$T[,c(1,2)], col=KPPACart.Data$Age)
 ```
