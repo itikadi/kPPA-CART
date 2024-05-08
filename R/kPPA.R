@@ -174,6 +174,7 @@ KPPACart <- function(X,n_features=100,
                         n_iterations=3000,
                         k_dim=10,
                         exp_clusters=4,
+                        kppa_dim = 2,
                         n_cores = 4){
 
   # create array of importances and features
@@ -208,7 +209,7 @@ KPPACart <- function(X,n_features=100,
 
     # do an initial kPPA run
     orig_mds <- cmdscale(dist(t(samp)), k = k_dim)
-    orig_ppa <- PPA_SO(orig_mds, 2)
+    orig_ppa <- PPA_SO(orig_mds, kppa_dim)
 
     # extract kurtosis
     orig_kurt <- orig_ppa$kurt
@@ -276,7 +277,7 @@ KPPACart <- function(X,n_features=100,
     # do MDS
     mds.top <- cmdscale(dist(t(top_data)), k = k_dim)
     # apply kPPA to MDS
-    kppa.top <- PPA_SO(mds.top, ndim=3)
+    kppa.top <- PPA_SO(mds.top, ndim=kppa_dim)
     # add solution to array
     solutions <- append(solutions, list(kppa.top$T))
   }
@@ -311,7 +312,8 @@ KPPACart <- function(X,n_features=100,
     list(
       T = best.solution,
       BestData = top_data,
-      assignedClusters = klust$cluster
+      assignedClusters = klust$cluster,
+      allData = imp_df
     )
   )
 
