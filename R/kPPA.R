@@ -238,7 +238,7 @@ KPPACart <- function(X,n_features=100,
     features <- append(features, res[[i]][2])
     importances <- append(importances, res[[i]][3])
     kurtosis <- append(kurtosis, res[[i]][1])
-  }
+  }f
 
   # unlist
   features <- unlist(features)
@@ -251,7 +251,7 @@ KPPACart <- function(X,n_features=100,
   # group by features and sort descending
   imp_df <- imp_df %>%
     group_by(features) %>%
-    summarize(total_importance = mean(importances), sd_importance = sd(importances)) %>%
+    dplyr::summarize(total_importance = mean(importances), sd_importance = sd(importances)) %>%
     #arrange(total_importance)
     arrange(desc(total_importance))
 
