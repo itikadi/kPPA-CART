@@ -238,7 +238,7 @@ KPPACart <- function(X,n_features=100,
     features <- append(features, res[[i]][2])
     importances <- append(importances, res[[i]][3])
     kurtosis <- append(kurtosis, res[[i]][1])
-  }f
+  }
 
   # unlist
   features <- unlist(features)
