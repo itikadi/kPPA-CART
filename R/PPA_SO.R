@@ -29,7 +29,7 @@ PPA_SO <- function(Xorig, ndim = 2, nguess = 4, orthflag = 1) {
   Xnow <- X0
 
   for (i in 1:ndim) {
-    ppaOne <- ppaone(Xnow, nguess)
+    ppaOne <- KPPACart:::ppaone(Xnow, nguess)
 
     PPOUT$K[,i] <- ppaOne$PPAinfo$k
     PPOUT$CFlag[,i] =ppaOne$PPAinfo$conflag

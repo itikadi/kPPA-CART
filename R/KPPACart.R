@@ -19,9 +19,6 @@ KPPACart <- function(X,n_features=100,
                         kppa_dim = 2,
                         n_cores = 4){
 
-  # source paone and PPA_SO
-  source("R/PPA_SO.R")
-  source("R/ppaone.R")
 
   # create array of importances and features
   importances <- c()
@@ -42,11 +39,7 @@ KPPACart <- function(X,n_features=100,
   print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
 
   # for loop
-  res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments")) %dopar% {
-
-    # source paone and PPA_SO
-    source("R/PPA_SO.R")
-    source("R/ppaone.R")
+  res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
 
     # set seed
     set.seed(it)
@@ -59,7 +52,7 @@ KPPACart <- function(X,n_features=100,
 
     # do an initial kPPA run
     orig_mds <- cmdscale(dist(t(samp)), k = k_dim)
-    orig_ppa <- PPA_SO(orig_mds, kppa_dim)
+    orig_ppa <- KPPACart:::PPA_SO(orig_mds, kppa_dim)
 
     # extract kurtosis
     orig_kurt <- orig_ppa$kurt
