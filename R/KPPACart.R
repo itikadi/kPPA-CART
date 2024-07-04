@@ -28,46 +28,49 @@ KPPACart <- function(X,n_features=100,
   # set up pararlleization
   n.cores <- n_cores
 
+  # create cluster
+  compute.clust <- makePSOCKcluster(n.cores)
+
+  # register it to be used by %dopar%
+  registerDoSNOW(compute.clust)
+
+  # check if it is registered (optional)
+  print("")
+  print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
+
   # Initialize a list to store the results
   res <- list()
 
-  print("NON PAR VERSON")
+  # for loop
+  res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
 
-  # Loop over the number of iterations
-  for (it in 1:n_iterations) {
-
-    # Set seed
+    # set seed
     set.seed(it)
 
-    # Randomly sample features
+    # randomly sample features
     samp <- sample(1:dim(X)[1], n_features)
 
-    print(samp)
-
-    # Select random features
+    # select random features
     samp <- X[samp,]
 
-    # Set seed
-    set.seed(it)
-    # Do an initial kPPA run
+    # do an initial kPPA run
     orig_mds <- cmdscale(dist(t(samp)), k = k_dim)
     orig_ppa <- KPPACart:::PPA_SO(orig_mds, kppa_dim)
 
-    # Extract kurtosis
+    # extract kurtosis
     orig_kurt <- orig_ppa$kurt
 
-    # Cluster based on 4 groups in this case
-    klust <- kmeans(orig_ppa$T, exp_clusters, nstart = exp_clusters)
+    # kluster based on 4 groups in this case
+    klust <- kmeans(orig_ppa$T, exp_clusters, nstart=exp_clusters)
 
-    # Set seed
-    set.seed(it)
     # samp contains actual data
     rf <- randomForest(x = t(samp), y = factor(klust$cluster))
 
-    # Get feature importance
+    # get feature importance
 
-    # Store the result in the list
-    res[[it]] <- list(sum(orig_kurt), rownames(rf$importance), as.vector(rf$importance))
+    # return everything
+    return(list(sum(orig_kurt),rownames(rf$importance),as.vector(rf$importance)))
+
   }
 
   print("DONE!")
