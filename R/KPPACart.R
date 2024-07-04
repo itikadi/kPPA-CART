@@ -38,6 +38,9 @@ KPPACart <- function(X,n_features=100,
   print("")
   print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
 
+  # Initialize a list to store the results
+  res <- list()
+
   # for loop
   res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
 

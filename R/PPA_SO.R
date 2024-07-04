@@ -6,8 +6,6 @@ PPA_SO <- function(Xorig, ndim = 2, nguess = 4, orthflag = 1) {
   nsamp <- nrow(Xorig)
   nvars <- ncol(Xorig)
 
-  set.seed(0)
-
   PPOUT <- list(T = array(0, dim = c(nsamp, nguess, ndim)),
                 V = array(0, dim = c(nvars, nguess, ndim)),
                 K = matrix(0, nrow = nguess, ncol = ndim),
