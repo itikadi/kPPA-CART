@@ -38,36 +38,38 @@ KPPACart <- function(X,n_features=100,
   print("")
   print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
 
-  # for loop
-  res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
+  # Initialize a list to store the results
+  res <- list()
 
-    # set seed
+  # Loop over the number of iterations
+  for (it in 1:n_iterations) {
+
+    # Set seed
     set.seed(it)
 
-    # randomly sample features
+    # Randomly sample features
     samp <- sample(1:dim(X)[1], n_features)
 
-    # select random features
+    # Select random features
     samp <- X[samp,]
 
-    # do an initial kPPA run
+    # Do an initial kPPA run
     orig_mds <- cmdscale(dist(t(samp)), k = k_dim)
     orig_ppa <- KPPACart:::PPA_SO(orig_mds, kppa_dim)
 
-    # extract kurtosis
+    # Extract kurtosis
     orig_kurt <- orig_ppa$kurt
 
-    # kluster based on 4 groups in this case
-    klust <- kmeans(orig_ppa$T, exp_clusters, nstart=exp_clusters)
+    # Cluster based on 4 groups in this case
+    klust <- kmeans(orig_ppa$T, exp_clusters, nstart = exp_clusters)
 
     # samp contains actual data
     rf <- randomForest(x = t(samp), y = factor(klust$cluster))
 
-    # get feature importance
+    # Get feature importance
 
-    # return everything
-    return(list(sum(orig_kurt),rownames(rf$importance),as.vector(rf$importance)))
-
+    # Store the result in the list
+    res[[it]] <- list(sum(orig_kurt), rownames(rf$importance), as.vector(rf$importance))
   }
 
   print("DONE!")
