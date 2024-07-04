@@ -28,18 +28,10 @@ KPPACart <- function(X,n_features=100,
   # set up pararlleization
   n.cores <- n_cores
 
-  # create cluster
-  compute.clust <- makePSOCKcluster(n.cores)
-
-  # register it to be used by %dopar%
-  registerDoSNOW(compute.clust)
-
-  # check if it is registered (optional)
-  print("")
-  print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
-
   # Initialize a list to store the results
   res <- list()
+
+  print("NON PAR VERSON")
 
   # Loop over the number of iterations
   for (it in 1:n_iterations) {
@@ -53,6 +45,8 @@ KPPACart <- function(X,n_features=100,
     # Select random features
     samp <- X[samp,]
 
+    # Set seed
+    set.seed(it)
     # Do an initial kPPA run
     orig_mds <- cmdscale(dist(t(samp)), k = k_dim)
     orig_ppa <- KPPACart:::PPA_SO(orig_mds, kppa_dim)
@@ -63,6 +57,8 @@ KPPACart <- function(X,n_features=100,
     # Cluster based on 4 groups in this case
     klust <- kmeans(orig_ppa$T, exp_clusters, nstart = exp_clusters)
 
+    # Set seed
+    set.seed(it)
     # samp contains actual data
     rf <- randomForest(x = t(samp), y = factor(klust$cluster))
 
