@@ -42,6 +42,8 @@ KPPACart <- function(X,n_features=100,
     # Randomly sample features
     samp <- sample(1:dim(X)[1], n_features)
 
+    print(samp)
+
     # Select random features
     samp <- X[samp,]
 
