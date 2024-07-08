@@ -42,14 +42,30 @@ KPPACart <- function(X,n_features=100,
   }
 
   # start message
-  cat("Executing KPPACart. \n")
+  cat("Executing KPPACart.\n")
+
+  # Create a progress bar
+  pb <- progress_bar$new(
+    format = "  Progress [:bar] :percent eta: :eta",
+    total = n_iterations,
+    width = 60
+  )
+
+  # Create a wrapper function to update the progress bar
+  progress_wrapper <- function(...) {
+    pb$tick()
+    return(TRUE)
+  }
+
+  # Register the progress bar to be used with %dopar%
+  opts <- list(progress = progress_wrapper)
 
 
   # Initialize a list to store the results
   res <- list()
 
   # for loop
-  res <- foreach(it=1:n_iterations, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
+  res <- foreach(it=1:n_iterations, .options.snow = opts, .packages = c("randomForest", "Matrix", "moments", "KPPACart")) %dopar% {
 
     # set seed
     set.seed(it)
@@ -73,8 +89,6 @@ KPPACart <- function(X,n_features=100,
     # samp contains actual data
     rf <- randomForest(x = t(samp), y = factor(klust$cluster))
 
-    # get feature importance
-
     # return everything
     return(list(sum(orig_kurt),rownames(rf$importance),as.vector(rf$importance)))
 
@@ -84,7 +98,7 @@ KPPACart <- function(X,n_features=100,
   stopCluster(compute.clust)
 
   # message that is done
-  cat("Done executing KPPACart. \n Processing results.\n")
+  cat("Done executing KPPACart. \nProcessing results.\n")
 
   # rework data
   for(i in 1:n_iterations){
