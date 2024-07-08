@@ -41,6 +41,9 @@ KPPACart <- function(X,n_features=100,
     cat("Clusters registered.\n")
   }
 
+  # start message
+  cat("Executing KPPACart. \n")
+
 
   # Initialize a list to store the results
   res <- list()
