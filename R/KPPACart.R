@@ -35,8 +35,12 @@ KPPACart <- function(X,n_features=100,
   registerDoSNOW(compute.clust)
 
   # check if it is registered (optional)
-  print("")
-  print(paste("Cluster detected by doParallel: ", foreach::getDoParRegistered()))
+  if(foreach::getDoParRegistered() == FALSE){
+    stop("Cluster not registered. \n Please make sure your clusters are accessible to R.")
+  }else{
+    cat("Clusters registered.\n")
+  }
+
 
   # Initialize a list to store the results
   res <- list()
@@ -73,7 +77,11 @@ KPPACart <- function(X,n_features=100,
 
   }
 
-  print("DONE!")
+  # close cluster
+  stopCluster(compute.clust)
+
+  # message that is done
+  cat("Done executing KPPACart. \n Processing results.\n")
 
   # rework data
   for(i in 1:n_iterations){
@@ -99,9 +107,10 @@ KPPACart <- function(X,n_features=100,
 
   # check dim df
   if(dim(X)[1] != dim(imp_df)[1]){
-    print("Please run more iterations or use more features per iteration.")
-    print(dim(imp_df)[1])
-    print(dim(X)[1])
+    warning("There are features that have not been sampled due to the number of iterations and features per iteration. \n",
+            "Consider increasing the number of iterations or features per iteration. \n",
+            "This may affect the final results. \n",
+            "Sampled: ", dim(imp_df)[1], " Total: ", dim(X)[1])
   }
 
   # exctract n_top features
@@ -143,7 +152,7 @@ KPPACart <- function(X,n_features=100,
   # select index of lowest
   low.idx <- which.min(row.sum)
 
-  # eslect solution
+  # select solution
   best.solution <- solutions[low.idx][[1]]
 
   # create clusters so we can see if they overlap
