@@ -182,12 +182,14 @@ KPPACart <- function(X,n_features=100,
   imp <- rf$importance
   imp <- imp[order(imp, decreasing = TRUE),]
 
+  # sort top data
+  top_data = top_data[names(imp),]
+
   # return best solution adn best data
   return(
     list(
       T = best.solution,
       bestData = top_data,
-      bestDataImportance =imp,
       assignedClusters = klust$cluster,
       allData = imp_df
     )
