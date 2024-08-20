@@ -135,7 +135,7 @@ KPPACart <- function(X,n_features=100,
   top <- imp_df$features[1:n_top]
 
   # get data
-  top_data <- X[rownames(X) %in% top,]
+  top_data <- X[top,]
 
   # keep track of solutions
   solutions = c()
@@ -175,11 +175,19 @@ KPPACart <- function(X,n_features=100,
   # create clusters so we can see if they overlap
   klust <- kmeans(best.solution, exp_clusters, nstart=exp_clusters)
 
+  # run random forest with bestData
+  rf <- randomForest(x = t(top_data), y = factor(klust$cluster))
+
+  # get importance and sort in decreasing
+  imp <- rf$importance
+  imp <- imp[order(imp, decreasing = TRUE),]
+
   # return best solution adn best data
   return(
     list(
       T = best.solution,
-      BestData = top_data,
+      bestData = top_data,
+      bestDataImportance =imp,
       assignedClusters = klust$cluster,
       allData = imp_df
     )
