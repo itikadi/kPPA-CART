@@ -13,12 +13,20 @@
 #' @return list of scores, important features/data, and cluster assignments for each sample
 #' @export
 KPPACart <- function(X,n_features=100,
-                        n_iterations=3000,
+                        n_iterations=NULL,
                         k_dim=10,
                         exp_clusters=4,
                         kppa_dim = 2,
                         n_cores = 4){
 
+  # if n_iterations is NULL, set it to the number of features
+  if(is.null(n_iterations)){
+    n <- dim(X)[1]/n_features
+    res <- sum(1/(1:n))  # Harmonic series summation
+    result <-ceiling(res * n)  # Ceiling function (round up to the nearest integer)
+    n_iterations <- result * n_features
+    cat("Number of iterations set to: ", n_iterations, "\n")
+  }
 
   # create array of importances and features
   importances <- c()
@@ -177,13 +185,6 @@ KPPACart <- function(X,n_features=100,
 
   # run random forest with bestData
   rf <- randomForest(x = t(top_data), y = factor(klust$cluster))
-
-  # get importance and sort in decreasing
-  imp <- rf$importance
-  imp <- imp[order(imp, decreasing = TRUE),]
-
-  # sort top data
-  top_data = top_data[names(imp),]
 
   # return best solution adn best data
   return(
