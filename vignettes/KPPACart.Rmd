@@ -71,6 +71,7 @@ n_iterations <- 1000
 k_dim <- 10
 exp_clusters <- 4
 n_cores <- 8
+clustering_method <- "kmeans"
 res <- KPPACart::KPPACart(KPPACart.Data$X,
                           n_features = n_features,
                           n_iterations = n_iterations,

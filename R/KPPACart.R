@@ -9,6 +9,7 @@
 #' @param exp_clusters Number of expected clusters
 #' @param n_cores Number of cores for multi-core execution
 #' @param kppa_dim Dimensions used in each KPPA iteration. The higher, the slower the algorithm runs.
+#' @param clustering_method either kmeans or gaussian depending on what clustering algorithm is preferred.
 #'
 #' @return list of scores, important features/data, and cluster assignments for each sample
 #' @export
@@ -17,7 +18,8 @@ KPPACart <- function(X,n_features=100,
                         k_dim=10,
                         exp_clusters=4,
                         kppa_dim = 2,
-                        n_cores = 4){
+                        n_cores = 4,
+                        clustering_method = "kmeans"){
 
   # if n_iterations is NULL, set it to the number of features
   if(is.null(n_iterations)){
@@ -91,11 +93,17 @@ KPPACart <- function(X,n_features=100,
     # extract kurtosis
     orig_kurt <- orig_ppa$kurt
 
-    # kluster based on 4 groups in this case
-    klust <- kmeans(orig_ppa$T, exp_clusters, nstart=exp_clusters)
+    if(clustering_method == 'kmeans'){
+      # kluster based on 4 groups in this case
+      klust <- kmeans(orig_ppa$T, exp_clusters, nstart=exp_clusters)
+      clusters_assigned = klust$cluster
+    }else{
+      gmm_model <- Mclust(orig_ppa$T, G=exp_clusters)
+      clusters_assigned = gmm_model$classification
+    }
 
     # samp contains actual data
-    rf <- randomForest(x = t(samp), y = factor(klust$cluster))
+    rf <- randomForest(x = t(samp), y = factor(clusters_assigned))
 
     # return everything
     return(list(sum(orig_kurt),rownames(rf$importance),as.vector(rf$importance)))
@@ -180,18 +188,24 @@ KPPACart <- function(X,n_features=100,
   # select solution
   best.solution <- solutions[low.idx][[1]]
 
-  # create clusters so we can see if they overlap
-  klust <- kmeans(best.solution, exp_clusters, nstart=exp_clusters)
+  if(clustering_method == 'kmeans'){
+    # kluster based on 4 groups in this case
+    klust <- kmeans(orig_ppa$T, exp_clusters, nstart=exp_clusters)
+    clusters_assigned = klust$cluster
+  }else{
+    gmm_model <- Mclust(orig_ppa$T, G=exp_clusters)
+    clusters_assigned = gmm_model$classification
+  }
 
   # run random forest with bestData
-  rf <- randomForest(x = t(top_data), y = factor(klust$cluster))
+  rf <- randomForest(x = t(top_data), y = factor(clusters_assigned))
 
   # return best solution adn best data
   return(
     list(
       T = best.solution,
       bestData = top_data,
-      assignedClusters = klust$cluster,
+      assignedClusters = clusters_assigned,
       allData = imp_df
     )
   )
