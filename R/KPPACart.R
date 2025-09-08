@@ -190,10 +190,10 @@ KPPACart <- function(X,n_features=100,
 
   if(clustering_method == 'kmeans'){
     # kluster based on 4 groups in this case
-    klust <- kmeans(best.solution$T, exp_clusters, nstart=exp_clusters)
+    klust <- kmeans(best.solution, exp_clusters, nstart=exp_clusters)
     clusters_assigned = klust$cluster
   }else{
-    gmm_model <- Mclust(best.solution$T, G=exp_clusters)
+    gmm_model <- Mclust(best.solution, G=exp_clusters)
     clusters_assigned = gmm_model$classification
   }
 
