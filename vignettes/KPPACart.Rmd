@@ -18,68 +18,98 @@ knitr::opts_chunk$set(
 
 ## Abstract
 
-Kurtosis Projection Pursuit with Classification and Regression Trees (KPPA Cart) encompasses a framework for the robust, unsupervised classification of integrated Multi-Omics data based on kurtosis as the function of interest. This introductory vignette provides an overview of the steps of the workflow, installation, and source of the data set used as example.
+Kurtosis Projection Pursuit with Classification and Regression Trees (KPPA CART) is a framework designed for robust, unsupervised classification of integrated multi-omics datasets. It leverages kurtosis as a projection index to find latent structures in the data, followed by feature importance estimation through Classification and Regression Trees. This vignette provides an overview of the method, usage instructions, and a walk-through of a typical workflow using example data.
 
 ## Contents
 
 Installation
-
 Introduction to KPPACart
-
 More Info & Citation
-
 Example
 
 ## Installation
 
-The latest version of the library can be installed from github using `devtools`.
+To install the latest development version of KPPACart from GitHub, you will need the devtools package:
 
 ```{r}
-install.packages("devtools")
 devtools::install_github("FabianBong/KPPACart")
 ```
 
+Ensure that all dependencies are installed during the process.
+
 ## Introduction to KPPACart
 
-KPPACart has 2 basic goals: find unsupervised clusters in the data and display the features that cause the clustering. The algorithm achieves the goals by randomly sampling `n_features` from the data `X`. Then kurtosis projection pursuit is applied to the subset of data. The resulting clusters are given a label based on the k-means algorithm and the variable `exp_clusters`. A random forest is used to predict the assigned labels based on the subset data; thus providing importance scores for all features in the subset. This procedure is repeated `n_iterations` times. When finished, the importance scores are averaged for each feature and a last kurtosis projection pursuit is run on the top `n_features` features, leading to the final result.
+The KPPACart package is designed with two core objectives:
+
+1. Unsupervised clustering of samples in high-dimensional omics data using kurtosis projection pursuit.
+2. Feature selection to determine which variables contribute most to the latent structure of the data.
+
+### Method Overview
+
+1. Subsampling of features: A random subset of features (n_features) is selected from the input data matrix X.
+2. Projection Pursuit: The subset undergoes projection pursuit using kurtosis as the optimization criterion. This helps identify directions in feature space that reveal heavy-tailed (non-Gaussian) structure, which often correlates with biologically relevant subgroups.
+3. Clustering: Samples are clustered in the reduced projection space using k-means (or other selected methods), with the number of expected clusters defined via exp_clusters.
+4. Feature Importance: A random forest classifier is trained to predict the cluster labels using the original subset. The variable importance scores from the random forest are stored.
+5. Repetition and Aggregation: Steps 1–4 are repeated n_iterations times. Importance scores are aggregated to identify consistently informative features.
+6. Final Projection: A final projection is computed on the top features (based on average importance), and the samples are visualized in the reduced component space.
+
+This approach enables discovery of intrinsic sample substructure in an unsupervised manner while highlighting the most informative variables—particularly useful in multi-omics studies.
 
 ## More Info & Citation
 
-Here goes the citation for the paper.
+If you use KPPACart in your work, please cite:
+
+Bong, F. (2025).......
+
+For further information or to report issues, visit the GitHub repository.
 
 ## Example
 
-A sample data set can be loaded by using `data("KPPACart.Data")`. It contains a list with X, Age and Sex. X represents an RNA count matrix, Age and Sex contain numerically coded age/sex groups. Since Age and Sex contain two groups each, the samples can be split into four total groups. To run KPPACart simply call the function with the default parameters or determine the parameters yourself. The power of KPPACart is that it shows better separation than application of PCA.
+The package includes an example dataset KPPACart.Data that mimics RNA-seq count data, with metadata for Age and Sex. Each of these covariates contains two groups, forming four unique sample subtypes.
+
+### Step 1: Load the Library and Data
 
 ```{r}
-# Load library
-library("KPPACart")
+library(KPPACart)
 
-# Load data
+# Load example data
 data("KPPACart.Data")
+```
 
-# Apply PCA
+### Step 2: Compare to PCA
+
+```{r}
 pca <- prcomp(t(KPPACart.Data$X))
 
-# plot pca colored by age and sex
-plot(pca$x[,1], pca$x[,2], col=factor(paste(KPPACart.Data$Sex,KPPACart.Data$Age)),
-     xlab="PC1", ylab="PC2")
+# Color by Age and Sex groups
+group_labels <- factor(paste(KPPACart.Data$Sex, KPPACart.Data$Age, sep = "_"))
 
-# Apply KPPACart
-n_features <- 100
-n_iterations <- 1000
-k_dim <- 10
-exp_clusters <- 4
-n_cores <- 8
-clustering_method <- "kmeans"
-res <- KPPACart::KPPACart(KPPACart.Data$X,
-                          n_features = n_features,
-                          n_iterations = n_iterations,
-                          k_dim = k_dim,
-                          exp_clusters = exp_clusters,
-                          n_cores = n_cores)
-
-# Plot KPPACart result
-plot(res$T[,1], res$T[,2], col=factor(paste(KPPACart.Data$Sex,KPPACart.Data$Age)),
-     xlab="Component 1", ylab="Component 2")
+plot(pca$x[,1], pca$x[,2], col = group_labels,
+     xlab = "PC1", ylab = "PC2", pch = 19,
+     main = "PCA: Group Separation by Age and Sex")
+legend("topright", legend = levels(group_labels), col = 1:4, pch = 19)
 ```
+
+### Step 3: Run KPPACart
+
+We now run the KPPA CART algorithm. You can adjust the parameters to suit your dataset size and computational resources. The result can be visualized to see clustering.
+
+```{r}
+set.seed(42)  # for reproducibility
+
+res <- KPPACart::KPPACart(
+  X = KPPACart.Data$X,
+  n_features = 100,
+  n_iterations = 1000,
+  k_dim = 10,
+  exp_clusters = 4,
+  n_cores = 8
+)
+
+plot(res$T[,1], res$T[,2], col = group_labels,
+     xlab = "Component 1", ylab = "Component 2", pch = 19,
+     main = "KPPACart: Projection by Component 1 and 2")
+legend("topright", legend = levels(group_labels), col = 1:4, pch = 19)
+```
+
+KPPACart typically reveals a clearer group separation compared to PCA.

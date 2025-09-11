@@ -153,6 +153,8 @@ KPPACart <- function(X,n_features=100,
   # get data
   top_data <- X[top,]
 
+  print(dim(top_data))
+
   # keep track of solutions
   solutions = c()
 
@@ -164,6 +166,7 @@ KPPACart <- function(X,n_features=100,
     kppa.top <- PPA_SO(mds.top, ndim=kppa_dim)
     # add solution to array
     solutions <- append(solutions, list(kppa.top$T))
+    print(dim(kppa.top$T))
   }
 
   # create empty matrxi of required size
@@ -187,6 +190,8 @@ KPPACart <- function(X,n_features=100,
 
   # select solution
   best.solution <- solutions[low.idx][[1]]
+
+  print(dim(best.solution))
 
   if(clustering_method == 'kmeans'){
     # kluster based on 4 groups in this case
