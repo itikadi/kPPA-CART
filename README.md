@@ -17,8 +17,8 @@ The **output** from any of the implementations can be explored either in R or Py
 
 ### Tutorial
 
-To use **R** for the whole analysis, there is the main tutorial:
-> The tutorials in R include a more detailed explanation of the workflow and source code.
+To use **R** for the whole analysis, here is the main workflow:
+> This workflow is structured as a tutorial in R, including more detailed explanations and the source code.
 
   - [Introduction and setup](https://htmlpreview.github.io/?https://github.com/itikadi/kPPA-CART/blob/main/vignettes/kPPA-CART.nb.html)
 
