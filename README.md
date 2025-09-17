@@ -1,6 +1,6 @@
 # kPPA-CART (kurtosis-based Projection Pursuit Analysis augmented with Classification and Regression Trees)
 
-Here, we implement kurtosis-based projection pursuit analysis (kPPA) augmented with classification and regression trees (CART) as an approach to deal with -omics data exhibiting small effect sizes and low feature intensities. We specifically employ kPPA-CART to integrate and visualize data deriving from the most common -omics platforms: transcriptomics by RNA-sequencing (RNA-seq), epigenomics by DNA methylation chips or bisulfite sequencing, and proteomics by reverse-phase protein arrays (RPPA) or mass spectrometry (MS). This package is described in Bong et al. (2025); *Nucleic Acids Research*; https://doi.org/10.1093/nar/gkaf844.
+Here, we implement kurtosis-based projection pursuit analysis (kPPA) augmented with classification and regression trees (CART) as an approach to deal with -omics data exhibiting small effect sizes and low feature intensities. We specifically employ kPPA-CART to integrate and visualize data deriving from the most common -omics platforms: transcriptomics by RNA-sequencing (RNA-seq), epigenomics by DNA methylation chips or bisulfite sequencing, and proteomics by reverse-phase protein arrays (RPPA) or mass spectrometry (MS). This package is described in Bong *et al*. (2025); *Nucleic Acids Research*; https://doi.org/10.1093/nar/gkaf844.
 
 ## Installation
 
