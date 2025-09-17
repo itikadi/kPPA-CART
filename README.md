@@ -1,6 +1,6 @@
 # KPPACart
 
-This package adds iterative kPPA with classification and regression trees as described in Bong et al. (2025); Nucleic Acids Research; https://doi.org/10.1093/nar/gkaf844.
+This package adds iterative kPPA with classification and regression trees as described in Bong et al. (2025); *Nucleic Acids Research*; https://doi.org/10.1093/nar/gkaf844.
 
 ## Installation
 
